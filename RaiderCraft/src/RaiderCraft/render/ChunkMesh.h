@@ -15,10 +15,6 @@ namespace RaiderCraft
 		int numOfVertices = 0;
 		int numOfIndices = 0;
 
-		int chunkRenderX = 0;
-		int chunkRenderY = 0;
-		int chunkRenderZ = 0;
-
 		bool init = false;
 		bool needsRebuild = false;
 	};
@@ -26,17 +22,18 @@ namespace RaiderCraft
 	struct ChunkVertex
 	{
 		float xyz[3];
-		float rgb[3];
+		float texCoord[3];
+		
+		ChunkVertex() {}
 
-		//ChunkVertex(float _x, float _y, float _z, float _r, float _g, float _b) : x(_x), y(_y), z(_z), r(_r), g(_g), b(_b) {}
-		ChunkVertex(float _x, float _y, float _z, float _r, float _g, float _b)
+		ChunkVertex(float _x, float _y, float _z, float _tx, float _ty, float _tw)
 		{
 			xyz[0] = _x;
 			xyz[1] = _y;
 			xyz[2] = _z;
-			rgb[0] = _r;
-			rgb[1] = _g;
-			rgb[2] = _b;
+			texCoord[0] = _tx;
+			texCoord[1] = _ty;
+			texCoord[2] = _tw;
 		}
 	};
 
@@ -47,34 +44,14 @@ namespace RaiderCraft
 		std::vector<int> _chunkIndices;
 		std::vector<ChunkVertex> _chunkVertices;
 	public:
-		inline int addVertex(float x, float y, float z, float r, float g, float b)
-		{
-			_chunkVertices.emplace_back(x, y, z, r, g, b);
-			return _chunkVertices.size() - 1;
-		}
-
-		inline void addTriangle(int i0, int i1, int i2)
-		{
-			_chunkIndices.push_back(i0);
-			_chunkIndices.push_back(i1);
-			_chunkIndices.push_back(i2);
-		}
-
-		inline void addQuad(int i0, int i1, int i2, int i3)
-		{
-			addTriangle(i0, i1, i2);
-			addTriangle(i0, i2, i3);
-		}
-
-		inline void clearTempMeshData()
-		{
-			_chunkVertices.clear();
-			_chunkIndices.clear();
-		}
+		int addVertex(float x, float y, float z, float tx, float ty, float tw);
+		void addTriangle(int i0, int i1, int i2);
+		void addQuad(int i0, int i1, int i2, int i3);
+		void clearTempMeshData();
 
 		ChunkMeshData& getData() { return _chunkMeshData; }
-		int getNumOfVertices() { return _chunkVertices.size(); }
-		int getNumOfIndices() { return _chunkIndices.size(); }
+		int getNumOfVertices() { if (_chunkVertices.size() != 0) return static_cast<int>(_chunkVertices.size()); else return _chunkMeshData.numOfVertices; }
+		int getNumOfIndices() { if (_chunkIndices.size() != 0) return static_cast<int>(_chunkIndices.size()); else return _chunkMeshData.numOfIndices; }
 
 		void* getRawVertexData() { return &_chunkVertices[0]; }
 		ChunkVertex* getChunkVertex() { return &_chunkVertices[0]; }

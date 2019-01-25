@@ -11,14 +11,6 @@
 
 namespace RaiderCraft
 {
-	struct Block
-	{
-	private:
-		int _blockID;
-	public:
-		Block(int blockID) : _blockID(blockID) {}
-	};
-
 	class ChunkData
 	{
 	private:
@@ -41,7 +33,7 @@ namespace RaiderCraft
 			struct
 			{
 				uint16_t padding;
-				uint8_t positiveXZ;
+				uint8_t positiveXZ; // TODO: See if there is a better way to store postive XY
 				uint8_t y;
 				uint16_t x;
 				uint16_t z;
@@ -83,7 +75,7 @@ namespace RaiderCraft
 		public:
 			void update(int block)
 			{
-				if (block != 0)
+				if (block != 0) // TODO: This should be checking for block transparency
 					_solidBlockCount++;
 				else
 					_solidBlockCount--;
@@ -100,22 +92,24 @@ namespace RaiderCraft
 			}
 		};
 	private:
+		ChunkPos _pos;
 		ChunkData _data;
 		ChunkMesh _chunkMesh;
 		ChunkLayer _chunkLayers[RD_CHUNK_DIM];
-		int blockToChunkIndex(int x, int y, int z)
+
+		inline int blockToChunkIndex(int x, int y, int z)
 		{
 			return x | y << 4 | z << 8;
 		}
 	public:
-		Chunk() : _data(RD_CHUNK_DIM * RD_CHUNK_DIM * RD_CHUNK_DIM) {}
+		Chunk(int x, int y, int z) : _pos(x, y, z), _data(RD_CHUNK_DIM * RD_CHUNK_DIM * RD_CHUNK_DIM) {}
 
-		int getBlockAt(int x, int y, int z)
+		inline int getBlockAt(int x, int y, int z)
 		{
 			RD_ASSERT(x >= 0 && x < RD_CHUNK_DIM && y >= 0 && y < RD_CHUNK_DIM && z >= 0 && z < RD_CHUNK_DIM, "Block out of bounds");
 			return getBlockAt(blockToChunkIndex(x, y, z));
 		}
-		int getBlockAt(int index) { return _data.getDataAt(index); }
+		inline int getBlockAt(int index) { return _data.getDataAt(index); }
 
 		void setBlockAt(int x, int y, int z, int data)
 		{
@@ -135,9 +129,7 @@ namespace RaiderCraft
 			return _chunkLayers[y];
 		}
 
-		ChunkMesh* getChunkMesh()
-		{
-			return &_chunkMesh;
-		}
+		ChunkMesh* getChunkMesh() { return &_chunkMesh; }
+		ChunkPos getChunkPos() { return _pos; }
 	};
 }

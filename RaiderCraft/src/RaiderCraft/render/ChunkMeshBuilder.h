@@ -13,11 +13,10 @@ namespace RaiderCraft
 	{
 	private:
 		ChunkMeshExtractor _meshExtractor;
-		Raider::RaiderDebugTimer _debugTimer;
 
 		void uploadMesh(ChunkMesh& chunkMesh);
 	public:
-		ChunkMeshBuilder() : _debugTimer("ChunkMeshBuilder") {}
+		ChunkMeshBuilder() {}
 
 		void buildChunk(World* world, int chunkX, int chunkY, int chunkZ);
 	};

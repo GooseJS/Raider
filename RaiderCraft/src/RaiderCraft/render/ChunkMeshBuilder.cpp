@@ -14,8 +14,6 @@ namespace RaiderCraft
 			glGenBuffers(1, &(meshData.chunkVertexBuffer));
 			glGenBuffers(1, &(meshData.chunkIndexBuffer));
 		}
-		void* lmao = chunkMesh.getRawVertexData();
-		ChunkVertex* lmao2 = chunkMesh.getChunkVertex();
 
 		glBindBuffer(GL_ARRAY_BUFFER, meshData.chunkVertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, chunkMesh.getNumOfVertices() * sizeof(ChunkVertex), chunkMesh.getRawVertexData(), GL_STATIC_DRAW);
@@ -27,7 +25,7 @@ namespace RaiderCraft
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ChunkVertex), (GLvoid*)offsetof(ChunkVertex, xyz));
 
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ChunkVertex), (GLvoid*)(offsetof(ChunkVertex, rgb)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ChunkVertex), (GLvoid*)(offsetof(ChunkVertex, texCoord)));
 
 		meshData.numOfIndices = chunkMesh.getNumOfIndices();
 		meshData.numOfVertices = chunkMesh.getNumOfVertices();

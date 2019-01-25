@@ -2,12 +2,13 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <Raider/GL.h>
+#include <Raider.h>
 #include <glm/gtx/transform.hpp>
 #include <Raider/render/shader.h>
 
 #include "Camera.h"
 #include "../world/World.h"
+#include "../world/Block.h"
 
 namespace RaiderCraft
 {
@@ -16,11 +17,18 @@ namespace RaiderCraft
 	private:
 		Raider::Shader _shader;
 		Camera* _worldRenderCam;
+		Raider::Texture::TextureArray _textureAtlas;
 	public:
 		WorldRenderer() {}
 		void initRenderer()
 		{
 			_shader.initFromFile("shader.vert", "shader.frag");
+			std::vector<std::string> fileNames;
+			fileNames.emplace_back("grass-side.png");
+			fileNames.emplace_back("grass-top.png");
+			fileNames.emplace_back("dirt.png");
+			_textureAtlas = Raider::Texture::create2DTextureArray("sprites.png", 16, 16, fileNames);
+			Blocks::getInstance()->loadBlockTextures(_textureAtlas);
 		}
 
 		void render(World* gameWorld)
@@ -38,11 +46,14 @@ namespace RaiderCraft
 
 			glm::mat4 translation(1.0f);
 
+			glBindTexture(GL_TEXTURE_2D_ARRAY, _textureAtlas.textureID);
+			glActiveTexture(GL_TEXTURE0);
+
 			for (auto &chunk : gameWorld->getLoadedChunks())
 			{
 				if (chunk->getChunkMesh()->getData().init)
 				{
-					translation = glm::translate(glm::vec3(chunk->getChunkMesh()->getData().chunkRenderX * RD_CHUNK_DIM, chunk->getChunkMesh()->getData().chunkRenderY * RD_CHUNK_DIM, chunk->getChunkMesh()->getData().chunkRenderZ * RD_CHUNK_DIM));
+					translation = glm::translate(glm::vec3(chunk->getChunkPos().x * RD_CHUNK_DIM, chunk->getChunkPos().y * RD_CHUNK_DIM, chunk->getChunkPos().z * RD_CHUNK_DIM));
 					glUniformMatrix4fv(_shader.uniform("translationMatrix"), 1, GL_FALSE, &translation[0][0]);
 					glBindVertexArray(chunk->getChunkMesh()->getData().chunkVAO);
 					glDrawElements(GL_TRIANGLES, chunk->getChunkMesh()->getData().numOfIndices, GL_UNSIGNED_INT, nullptr);

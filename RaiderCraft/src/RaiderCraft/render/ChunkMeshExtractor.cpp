@@ -24,94 +24,112 @@ namespace RaiderCraft
 		return visibleFaces;
 	}
 
+	int ChunkMeshExtractor::addVertex(int x, int y, int z, float tx, float ty, float tw, ChunkMesh & mesh, std::vector<ChunkIndex>(&indices)[RD_CHUNK_DIM + 1][RD_CHUNK_DIM + 1][RD_CHUNK_DIM + 1])
+	{
+		std::vector<ChunkIndex> result = indices[x][y][z];
+		if (result.empty())
+		{
+			int index = mesh.addVertex(x, y, z, tx, ty, tw);
+			indices[x][y][z].emplace_back(index, tx, ty, tw);
+			return index;
+		}
+
+		for (auto& index : result)
+		{
+			if (index.tx == tx && index.ty == ty && index.tw == tw)
+				return index.index;
+		}
+
+		int index = mesh.addVertex(x, y, z, tx, ty, tw);
+		indices[x][y][z].emplace_back(index, tx, ty, tw);
+		return index;
+	}
+
 	void ChunkMeshExtractor::createMeshData(World* world, int chunkX, int chunkY, int chunkZ)
 	{
 		Chunk* chunk = world->getChunkAt(chunkX, chunkY, chunkZ);
 		ChunkMesh& chunkMesh = *(chunk->getChunkMesh());
-		chunkMesh.getData().chunkRenderX = chunkX;
-		chunkMesh.getData().chunkRenderY = chunkY;
-		chunkMesh.getData().chunkRenderZ = chunkZ;
+
 		std::vector<glm::vec4> chunkQuads;
-		int _currentIndices[RD_CHUNK_DIM + 1][RD_CHUNK_DIM + 1][RD_CHUNK_DIM + 1];
-
-		std::fill_n(&_currentIndices[0][0][0], std::pow(RD_CHUNK_DIM + 1, 3), -1);
-
-		Raider::RaiderDebugTimer::RaiderDebugSection section("");
+		std::vector<ChunkMeshExtractor::ChunkIndex> _currentIndices[RD_CHUNK_DIM + 1][RD_CHUNK_DIM + 1][RD_CHUNK_DIM + 1];
 
 		for (int y = 0; y < RD_CHUNK_DIM; y++)
 		{
 			Chunk::ChunkLayer layer = chunk->getLayerAt(y);
+
 			if (!layer.shouldDraw())
 				continue;
 			else if (layer.isAllSolid())
 			{
-				bool shouldContinue = false;
 				if (y > 0 && y < 15)
 				{
-					if (chunk->getLayerAt(y + 1).isAllSolid() && chunk->getLayerAt(y - 1).isAllSolid())
-						shouldContinue = true;
+					if (chunk->getLayerAt(y + 1).isAllSolid() && chunk->getLayerAt(y - 1).isAllSolid()) // TODO: This needs to be checking other chunk layers, above, below, and to the sides
+						continue;
 				}
-				if (shouldContinue)
-					continue;
 			}
+
 			for (int x = 0; x < RD_CHUNK_DIM; x++)
 			{
 				for (int z = 0; z < RD_CHUNK_DIM; z++)
 				{
-					if (chunk->getBlockAt(x, y, z) != 0)
+					Block currentBlock = Blocks::getInstance()->getBlock(chunk->getBlockAt(x, y, z));
+					if (currentBlock.getBlockID() != 0) // TODO: This should really actually be checking if the block should be drawn like a block
 					{
-						float r = y / 30.f;
-						float g = y / 80.f;
-						float b = y / 100.f;
-
 						VisibleBlockFaces visibleFaces = checkForVisibleFaces(world, x + (chunkX * RD_CHUNK_DIM), y + (chunkY * RD_CHUNK_DIM), z + (chunkZ * RD_CHUNK_DIM));
 
+						static float tex[2] = { 0.0f, 1.0f };
 						if (visibleFaces.NX)
 						{
-							int v0 = addVertex(x, y, z, r, g, b, chunkMesh, _currentIndices);
-							int v1 = addVertex(x, y + 1, z, r, g, b, chunkMesh, _currentIndices);
-							int v2 = addVertex(x, y + 1, z + 1, r, g, b, chunkMesh, _currentIndices);
-							int v3 = addVertex(x, y, z + 1, r, g, b, chunkMesh, _currentIndices);
+							int layer = currentBlock.getTextureLayerForFace(Block::BlockFace::NEGATIVE_X);
+							int v0 = addVertex(x, y, z, tex[0], tex[1], layer, chunkMesh, _currentIndices);
+							int v1 = addVertex(x, y + 1, z, tex[0], tex[0], layer, chunkMesh, _currentIndices);
+							int v2 = addVertex(x, y + 1, z + 1, tex[1], tex[0], layer, chunkMesh, _currentIndices);
+							int v3 = addVertex(x, y, z + 1, tex[0], tex[1], layer, chunkMesh, _currentIndices);
 							chunkQuads.emplace_back(v0, v1, v2, v3);
 						}
 						if (visibleFaces.NZ)
 						{
-							int v0 = addVertex(x, y, z, r, g, b, chunkMesh, _currentIndices);
-							int v1 = addVertex(x + 1, y, z, r, g, b, chunkMesh, _currentIndices);
-							int v2 = addVertex(x + 1, y + 1, z, r, g, b, chunkMesh, _currentIndices);
-							int v3 = addVertex(x, y + 1, z, r, g, b, chunkMesh, _currentIndices);
+							int layer = currentBlock.getTextureLayerForFace(Block::BlockFace::NEGATIVE_Z);
+							int v0 = addVertex(x, y, z, tex[0], tex[1], layer, chunkMesh, _currentIndices);
+							int v1 = addVertex(x + 1, y, z, tex[1], tex[1], layer, chunkMesh, _currentIndices);
+							int v2 = addVertex(x + 1, y + 1, z, tex[1], tex[0], layer, chunkMesh, _currentIndices);
+							int v3 = addVertex(x, y + 1, z, tex[0], tex[0], layer, chunkMesh, _currentIndices);
 							chunkQuads.emplace_back(v0, v1, v2, v3);
 						}
 						if (visibleFaces.NY)
 						{
-							int v0 = addVertex(x, y, z, r, g, b, chunkMesh, _currentIndices);
-							int v1 = addVertex(x, y, z + 1, r, g, b, chunkMesh, _currentIndices);
-							int v2 = addVertex(x + 1, y, z + 1, r, g, b, chunkMesh, _currentIndices);
-							int v3 = addVertex(x + 1, y, z, r, g, b, chunkMesh, _currentIndices);
+							int layer = currentBlock.getTextureLayerForFace(Block::BlockFace::NEGATIVE_Y);
+							int v0 = addVertex(x, y, z, tex[0], tex[1], layer, chunkMesh, _currentIndices);
+							int v1 = addVertex(x, y, z + 1, tex[0], tex[0], layer, chunkMesh, _currentIndices);
+							int v2 = addVertex(x + 1, y, z + 1, tex[1], tex[0], layer, chunkMesh, _currentIndices);
+							int v3 = addVertex(x + 1, y, z, tex[1], tex[1], layer, chunkMesh, _currentIndices);
 							chunkQuads.emplace_back(v0, v1, v2, v3);
 						}
 						if (visibleFaces.PX)
 						{
-							int v0 = addVertex(x + 1, y, z, r, g, b, chunkMesh, _currentIndices);
-							int v1 = addVertex(x + 1, y, z + 1, r, g, b, chunkMesh, _currentIndices);
-							int v2 = addVertex(x + 1, y + 1, z + 1, r, g, b, chunkMesh, _currentIndices);
-							int v3 = addVertex(x + 1, y + 1, z, r, g, b, chunkMesh, _currentIndices);
+							int layer = currentBlock.getTextureLayerForFace(Block::BlockFace::POSITIVE_X);
+							int v0 = addVertex(x + 1, y, z, tex[0], tex[1], layer, chunkMesh, _currentIndices);
+							int v1 = addVertex(x + 1, y, z + 1, tex[1], tex[1], layer, chunkMesh, _currentIndices);
+							int v2 = addVertex(x + 1, y + 1, z + 1, tex[1], tex[0], layer, chunkMesh, _currentIndices);
+							int v3 = addVertex(x + 1, y + 1, z, tex[0], tex[0], layer, chunkMesh, _currentIndices);
 							chunkQuads.emplace_back(v0, v1, v2, v3);
 						}
 						if (visibleFaces.PZ)
 						{
-							int v0 = addVertex(x, y, z + 1, r, g, b, chunkMesh, _currentIndices);
-							int v1 = addVertex(x, y + 1, z + 1, r, g, b, chunkMesh, _currentIndices);
-							int v2 = addVertex(x + 1, y + 1, z + 1, r, g, b, chunkMesh, _currentIndices);
-							int v3 = addVertex(x + 1, y, z + 1, r, g, b, chunkMesh, _currentIndices);
+							int layer = currentBlock.getTextureLayerForFace(Block::BlockFace::POSITIVE_Z);
+							int v0 = addVertex(x, y, z + 1, tex[0], tex[1], layer, chunkMesh, _currentIndices);
+							int v1 = addVertex(x, y + 1, z + 1, tex[0], tex[0], layer, chunkMesh, _currentIndices);
+							int v2 = addVertex(x + 1, y + 1, z + 1, tex[1], tex[0], layer, chunkMesh, _currentIndices);
+							int v3 = addVertex(x + 1, y, z + 1, tex[1], tex[1], layer, chunkMesh, _currentIndices);
 							chunkQuads.emplace_back(v0, v1, v2, v3);
 						}
 						if (visibleFaces.PY)
 						{
-							int v0 = addVertex(x, y + 1, z, r, g, b, chunkMesh, _currentIndices);
-							int v1 = addVertex(x + 1, y + 1, z, r, g, b, chunkMesh, _currentIndices);
-							int v2 = addVertex(x + 1, y + 1, z + 1, r, g, b, chunkMesh, _currentIndices);
-							int v3 = addVertex(x, y + 1, z + 1, r, g, b, chunkMesh, _currentIndices);
+							int layer = currentBlock.getTextureLayerForFace(Block::BlockFace::POSITIVE_Y);
+							int v0 = addVertex(x, y + 1, z, tex[0], tex[1], layer, chunkMesh, _currentIndices);
+							int v1 = addVertex(x + 1, y + 1, z, tex[1], tex[1], layer, chunkMesh, _currentIndices);
+							int v2 = addVertex(x + 1, y + 1, z + 1, tex[1], tex[0], layer, chunkMesh, _currentIndices);
+							int v3 = addVertex(x, y + 1, z + 1, tex[0], tex[0], layer, chunkMesh, _currentIndices);
 							chunkQuads.emplace_back(v0, v1, v2, v3);
 						}
 					}

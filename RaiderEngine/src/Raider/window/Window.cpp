@@ -19,6 +19,7 @@ namespace Raider
 		_data.title = cfg.title;
 		_data.width = cfg.width;
 		_data.height = cfg.height;
+		_data.aspectRatio = static_cast<float>(cfg.width) / static_cast<float>(cfg.height);
 
 		RD_CORE_INFO("Creating window - {}, {}, {}", _data.title, _data.width, _data.height);
 
@@ -38,9 +39,13 @@ namespace Raider
 		glfwSetWindowUserPointer(_window, &_data);
 		setVSync(true);
 
-		glewExperimental = true;
+		//glewExperimental = true;
 		GLenum glewError = glewInit();
-		RD_CORE_ASSERT(glewError != GLEW_OK, "Could not initialize GLEW."); // TODO: More error checking for this and for the Window creation
+		if (glewError != 0)
+		{
+			RD_CRITICAL("Couldn't initialize GLEW. {}", glewGetErrorString(glewError));
+			RD_CORE_ASSERT(glewError != 0, "Could not initialize GLEW."); // TODO: More error checking for this and for the Window creation
+		}
 
 		glfwSetWindowSizeCallback(_window, [](GLFWwindow* window, int width, int height)
 		{

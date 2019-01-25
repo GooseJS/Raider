@@ -10,6 +10,8 @@
 #define RAIDER_API
 #endif
 
+#include <Raider/Logger.h>
+
 #ifdef RD_ENABLE_ASSERTS
 #ifdef RD_PLATFORM_WINDOWS
 #define RD_ASSERT(x, ...) { if(!(x)) { RD_CRITICAL("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
@@ -32,6 +34,7 @@ namespace Raider
 	{
 		const char* title;
 		unsigned int width, height;
+		float aspectRatio;
 		bool vSync;
 
 		float oldMouseX;

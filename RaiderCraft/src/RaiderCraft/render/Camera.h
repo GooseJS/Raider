@@ -29,14 +29,7 @@ namespace RaiderCraft
 
 		bool _rebuildProjectionMatrix = true;
 
-		inline void generateProjectionMatrix()
-		{
-			float width = Raider::GameSettings::getInstance()->windowData->width;
-			float height = Raider::GameSettings::getInstance()->windowData->height;
-			_projectionMatrix = glm::perspective(glm::radians(_fov), width / height, 0.1f, 1000.0f);
-
-			_rebuildProjectionMatrix = false;
-		}
+		void generateProjectionMatrix();
 
 	public:
 		Camera() {}
@@ -44,46 +37,14 @@ namespace RaiderCraft
 		Camera(const Camera& cam) { _projectionMatrix = cam._projectionMatrix; }
 		Camera& operator=(const Camera& cam) = default;
 
-		inline void generateMatrices()
-		{
-			_direction = glm::normalize(glm::vec3(cos(glm::radians(_pitch)) * cos(glm::radians(_yaw)), sin(glm::radians(_pitch)), cos(glm::radians(_pitch)) * sin(glm::radians(_yaw))));
-			_right = glm::normalize(glm::cross(_worldUp, _direction));
-			_up = glm::normalize(glm::cross(_direction, _right));
+		void generateMatrices();
 
-			_viewMatrix = glm::lookAt(_position, _position + _direction, _up);
-			if (_rebuildProjectionMatrix)
-				generateProjectionMatrix();
-		}
-
-		inline void rotateCamera(float rotX, float rotY)
-		{
-			_yaw += _mouseSpeed * Raider::GameSettings::getInstance()->gameTime->getDeltaTime() * rotX;
-			_pitch += _mouseSpeed * Raider::GameSettings::getInstance()->gameTime->getDeltaTime() * rotY;
-
-			if (_pitch > 89.0f) _pitch = 89.0f;
-			else if (_pitch < -89.0f) _pitch = -89.0f;
-
-			if (_yaw > 360.0f) _yaw = 0.f;
-			if (_yaw < 0.f) _yaw = 360.0f;
-		}
-
-		inline void moveCamera(float forwardBack, float strafe, float upDown)
-		{
-			_position += _direction * Raider::GameSettings::getInstance()->gameTime->getDeltaTime() * forwardBack;
-			_position -= _right * Raider::GameSettings::getInstance()->gameTime->getDeltaTime() * strafe;
-			_position += _up * Raider::GameSettings::getInstance()->gameTime->getDeltaTime() * upDown;
-		}
-
-		inline void setCameraPos(float x, float y, float z)
-		{
-			_position.x = x;
-			_position.y = y;
-			_position.z = z;
-		}
-
-		inline glm::mat4 getProjectionMatrix() { return _projectionMatrix; }
-		inline glm::mat4 getViewMatrix() { return _viewMatrix; }
+		void rotateCamera(float rotX, float rotY);
+		void moveCamera(float forwardBack, float strafe, float upDown);
+		void setCameraPos(float x, float y, float z);
 
 		inline glm::vec3 getPosition() { return _position;  }
+		inline glm::mat4 getViewMatrix() { return _viewMatrix; }
+		inline glm::mat4 getProjectionMatrix() { return _projectionMatrix; }
 	};
 }

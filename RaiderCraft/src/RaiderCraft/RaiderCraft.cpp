@@ -1,10 +1,13 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include <Raider.h>
+#include <Raider/EntryPoint.h>
 
 #include "Player.h"
 #include "world/World.h"
 #include "world/WorldGenerator.h"
 #include "render/WorldRenderer.h"
 #include "render/ChunkMeshBuilder.h"
+#include "world/Block.h"
 
 class RaiderCraftApp : public Raider::Application
 {
@@ -27,7 +30,16 @@ public:
 			firstCall = true;
 
 			worldRenderer.setWorldRenderCam(&player.getPlayerCamera());
-
+			RaiderCraft::Block BLOCK_AIR(0, "Air");
+			RaiderCraft::Block BLOCK_GRASS(1, "Grass");
+			BLOCK_GRASS.setFaceTexture(RaiderCraft::Block::BlockFace::POSITIVE_Y, "grass-top.png");
+			BLOCK_GRASS.setFaceTexture(RaiderCraft::Block::BlockFace::SIDES, "grass-side.png");
+			BLOCK_GRASS.setFaceTexture(RaiderCraft::Block::BlockFace::NEGATIVE_Y, "dirt.png");
+			RaiderCraft::Block BLOCK_DIRT(2, "Dirt");
+			BLOCK_DIRT.setFaceTexture(RaiderCraft::Block::BlockFace::ALL, "dirt.png");
+			RaiderCraft::Blocks::getInstance()->addBlock(BLOCK_AIR);
+			RaiderCraft::Blocks::getInstance()->addBlock(BLOCK_GRASS);
+			RaiderCraft::Blocks::getInstance()->addBlock(BLOCK_DIRT);
 			debugTimer.startSection("worldGen");
 			worldGenerator.generateWorld(&world);
 			Raider::RaiderDebugTimer::RaiderDebugSection section = debugTimer.endSection();

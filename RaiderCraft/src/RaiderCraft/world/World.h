@@ -33,7 +33,7 @@ namespace RaiderCraft
 			Chunk* chunk;
 			if (chunkIter == _chunks.end())
 			{
-				chunk = new Chunk();
+				chunk = new Chunk(chunkX, chunkY, chunkZ);
 				_chunks.insert(std::pair<uint64_t, Chunk*>(chunkPosToChunkIndex(chunkX, chunkY, chunkZ), chunk));
 			}
 			else

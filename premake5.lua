@@ -16,10 +16,13 @@ IncludeDir["spdlog"] = "lib/spdlog/include"
 IncludeDir["glm"] = "lib/glm"
 IncludeDir["libnoise"] = "lib/libnoise/src"
 IncludeDir["noiseutils"] = "lib/libnoise/noiseutils"
+IncludeDir["stb"] = "lib/stb"
+IncludeDir["imgui"] = "lib/imgui"
 
 include "lib/glfw"
 include "lib/glew"
 include "lib/libnoise"
+include "lib/imgui"
 
 project "RaiderEngine"
 	location "RaiderEngine"
@@ -41,6 +44,8 @@ project "RaiderEngine"
 		"%{IncludeDir.GLEW}",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb}",
+		"%{IncludeDir.imgui}",
 		"%{prj.name}/src"
 	}
 
@@ -48,6 +53,7 @@ project "RaiderEngine"
 	{
 		"GLFW",
 		"GLEW",
+		"imgui",
 		"opengl32.lib"
 	}
 
@@ -61,7 +67,8 @@ project "RaiderEngine"
 	{
 		"RD_PLATFORM_WINDOWS",
 		"RD_BUILD_DLL",
-		"RD_DEBUG"
+		"RD_DEBUG",
+		"RD_ENABLE_ASSERTS"
 	}
 
 	postbuildcommands
@@ -94,13 +101,15 @@ project "RaiderCraft"
 
 	includedirs
 	{
+		"RaiderEngine/src",
+		"%{IncludeDir.stb}",
+		"%{IncludeDir.glm}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLEW}",
+		"%{IncludeDir.imgui}",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.glm}",
 		"%{IncludeDir.libnoise}",
-		"%{IncludeDir.noiseutils}",
-		"RaiderEngine/src"
+		"%{IncludeDir.noiseutils}"
 	}
 
 	links
@@ -110,6 +119,11 @@ project "RaiderCraft"
 		"libnoise",
 		"opengl32.lib",
 		"RaiderEngine"
+	}
+
+	defines
+	{
+		"RD_ENABLE_ASSERTS"
 	}
 
 	filter "system:windows"
