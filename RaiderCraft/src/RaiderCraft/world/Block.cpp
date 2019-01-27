@@ -2,40 +2,53 @@
 
 namespace RaiderCraft
 {
-	void Block::setFaceTexture(BlockFace face, std::string textureName)
+	///region Block
+	Block::Block(const char * name, BlockData blockData) : _blockID(BlockManager::getInstance()->getLastRegisteredBlockID()), _name(name), _data(blockData)
 	{
-		if (face != ALL || face != SIDES)
-			_blockFaceTextures.insert(std::pair(face, textureName));
-		else
+
+	}
+	///endregion
+
+	///region BlockManager
+	BlockManager* BlockManager::getInstance()
+	{
+		static BlockManager instance;
+		return &instance;
+	}
+
+	int BlockManager::registerBlock(Block block)
+	{
+		_registeredBlocks.push_back(block);
+		return _registeredBlocks.size() - 1;
+	}
+
+	Block BlockManager::getRegisteredBlock(int blockID)
+	{
+		return _registeredBlocks[blockID];
+	}
+
+	Block BlockManager::getRegisteredBlock(const char * blockName)
+	{
+		for (const auto& block : _registeredBlocks)
 		{
-			if (face == ALL)
-			{
-				_blockFaceTextures.insert(std::pair(POSITIVE_Y, textureName));
-				_blockFaceTextures.insert(std::pair(NEGATIVE_Y, textureName));
-				_blockFaceTextures.insert(std::pair(NEGATIVE_X, textureName));
-				_blockFaceTextures.insert(std::pair(POSITIVE_X, textureName));
-				_blockFaceTextures.insert(std::pair(POSITIVE_Z, textureName));
-				_blockFaceTextures.insert(std::pair(NEGATIVE_Z, textureName));
-			}
-			else if (face == SIDES)
-			{
-				_blockFaceTextures.insert(std::pair(NEGATIVE_X, textureName));
-				_blockFaceTextures.insert(std::pair(POSITIVE_X, textureName));
-				_blockFaceTextures.insert(std::pair(POSITIVE_Z, textureName));
-				_blockFaceTextures.insert(std::pair(NEGATIVE_Z, textureName));
-			}
+			if (block.getName() == blockName)
+				return block;
 		}
 	}
 
-	void Block::loadTextures(Raider::Texture::TextureArray textureArray)
+	int BlockManager::getLastRegisteredBlockID()
 	{
-		for (const auto& entry : _blockFaceTextures)
-		{
-			auto iter = textureArray.textureEntries.find(entry.second);
-			if (iter != textureArray.textureEntries.end())
-			{
-				_textureAtlasLayers[entry.first] = iter->second;
-			}
-		}
+		return _registeredBlocks.size() - 1;
 	}
+
+	void BlockManager::loadTextureAtlas(const char* path, int texelWidth, int texelHeight, std::vector<std::string> fileNames)
+	{
+		_textureAtlas = Raider::Texture::create2DTextureArray(path, texelWidth, texelHeight, fileNames);
+	}
+
+	void BlockManager::setBlockTexture(Block & block, BlockFaceLayers layer, const char * textureName)
+	{
+		if (layer)
+	}
+	///endregion
 }

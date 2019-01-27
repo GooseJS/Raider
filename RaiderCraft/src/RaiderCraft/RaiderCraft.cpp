@@ -30,7 +30,13 @@ public:
 			firstCall = true;
 
 			worldRenderer.setWorldRenderCam(&player.getPlayerCamera());
-			RaiderCraft::Block BLOCK_AIR(0, "Air");
+			
+			RaiderCraft::BlockData BLOCK_DATA_AIR;
+			BLOCK_DATA_AIR.textureLayers.PY = 
+
+			RaiderCraft::BlockData BLOCK_DATA_GRASS;
+			RaiderCraft::BlockData BLOCK_DATA_DIRT;
+			RaiderCraft::Block BLOCK_AIR("Air", BLOCK_DATA_AIR);
 			RaiderCraft::Block BLOCK_GRASS(1, "Grass");
 			BLOCK_GRASS.setFaceTexture(RaiderCraft::Block::BlockFace::POSITIVE_Y, "grass-top.png");
 			BLOCK_GRASS.setFaceTexture(RaiderCraft::Block::BlockFace::SIDES, "grass-side.png");

@@ -15,10 +15,11 @@ namespace RaiderCraft
 		_chunkIndices.push_back(i2);
 	}
 
+	// STARTING i0 FROM LOWER LEFT CORNER GOING CCW
 	void ChunkMesh::addQuad(int i0, int i1, int i2, int i3)
 	{
 		addTriangle(i0, i1, i2);
-		addTriangle(i0, i2, i3);
+		addTriangle(i3, i2, i1);
 	}
 
 	void ChunkMesh::clearTempMeshData()

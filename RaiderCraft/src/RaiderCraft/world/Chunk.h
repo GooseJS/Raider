@@ -91,11 +91,21 @@ namespace RaiderCraft
 				return _solidBlockCount != 0;
 			}
 		};
+		struct SurroundingChunks
+		{
+			Chunk* NX;
+			Chunk* NY;
+			Chunk* NZ;
+			Chunk* PX;
+			Chunk* PY;
+			Chunk* PZ;
+		};
 	private:
 		ChunkPos _pos;
 		ChunkData _data;
 		ChunkMesh _chunkMesh;
 		ChunkLayer _chunkLayers[RD_CHUNK_DIM];
+		SurroundingChunks _surroundingChunks;
 
 		inline int blockToChunkIndex(int x, int y, int z)
 		{
@@ -130,6 +140,8 @@ namespace RaiderCraft
 		}
 
 		ChunkMesh* getChunkMesh() { return &_chunkMesh; }
+		SurroundingChunks* getSurroundingChunks() { return &_surroundingChunks; }
+
 		ChunkPos getChunkPos() { return _pos; }
 	};
 }
