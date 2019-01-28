@@ -11,7 +11,8 @@ namespace RaiderCraft
 		int nyBlock = world->getBlockAt(blockX, blockY - 1, blockZ);
 		int nzBlock = world->getBlockAt(blockX, blockY, blockZ - 1);
 		int pxBlock = world->getBlockAt(blockX + 1, blockY, blockZ);
-		int pyBlock = world->getBlockAt(blockX, blockY + 1, blockZ);
+		int pyBlock = world->getBlockAt(blockX,
+			blockY + 1, blockZ);
 		int pzBlock = world->getBlockAt(blockX, blockY, blockZ + 1);
 
 		visibleFaces.NX = nxBlock == 0;
@@ -58,55 +59,55 @@ namespace RaiderCraft
 						if (visibleFaces.NX)
 						{
 							int layer = blockData.textureLayers.NX;
-							int v0 = chunkMesh.addVertex(x, y, z  + 1, tex[0], tex[0], layer);
-							int v1 = chunkMesh.addVertex(x, y, z, tex[1], tex[0], layer);
-							int v2 = chunkMesh.addVertex(x, y + 1, z + 1, tex[0], tex[1], layer);
-							int v3 = chunkMesh.addVertex(x, y + 1, z, tex[1], tex[1], layer);
+							int v0 = chunkMesh.addVertex(x, y, z  + 1, tex[0], tex[1], layer);
+							int v1 = chunkMesh.addVertex(x, y, z, tex[1], tex[1], layer);
+							int v2 = chunkMesh.addVertex(x, y + 1, z + 1, tex[0], tex[0], layer);
+							int v3 = chunkMesh.addVertex(x, y + 1, z, tex[1], tex[0], layer);
 							chunkMesh.addQuad(v0, v1, v2, v3);
 						}
 						if (visibleFaces.NZ)
 						{
 							int layer = blockData.textureLayers.NZ;
-							int v0 = chunkMesh.addVertex(x, y, z, tex[0], tex[0], layer);
-							int v1 = chunkMesh.addVertex(x + 1, y, z, tex[1], tex[0], layer);
-							int v2 = chunkMesh.addVertex(x, y + 1, z, tex[0], tex[1], layer);
-							int v3 = chunkMesh.addVertex(x + 1, y + 1, z, tex[1], tex[1], layer);
+							int v0 = chunkMesh.addVertex(x, y, z, tex[0], tex[1], layer);
+							int v1 = chunkMesh.addVertex(x + 1, y, z, tex[1], tex[1], layer);
+							int v2 = chunkMesh.addVertex(x, y + 1, z, tex[0], tex[0], layer);
+							int v3 = chunkMesh.addVertex(x + 1, y + 1, z, tex[1], tex[0], layer);
 							chunkMesh.addQuad(v0, v1, v2, v3);
 						}
 						if (visibleFaces.NY)
 						{
 							int layer = blockData.textureLayers.NY;
-							int v0 = chunkMesh.addVertex(x, y, z + 1, tex[0], tex[0], layer);
-							int v1 = chunkMesh.addVertex(x + 1, y, z + 1, tex[1], tex[0], layer);
-							int v2 = chunkMesh.addVertex(x, y, z, tex[0], tex[1], layer);
-							int v3 = chunkMesh.addVertex(x + 1, y, z, tex[1], tex[1], layer);
+							int v0 = chunkMesh.addVertex(x, y, z + 1, tex[0], tex[1], layer);
+							int v1 = chunkMesh.addVertex(x + 1, y, z + 1, tex[1], tex[1], layer);
+							int v2 = chunkMesh.addVertex(x, y, z, tex[0], tex[0], layer);
+							int v3 = chunkMesh.addVertex(x + 1, y, z, tex[1], tex[0], layer);
 							chunkMesh.addQuad(v0, v1, v2, v3);
 						}
 						if (visibleFaces.PX)
 						{
 							int layer = blockData.textureLayers.PX;
-							int v0 = chunkMesh.addVertex(x + 1, y, z, tex[0], tex[0], layer);
-							int v1 = chunkMesh.addVertex(x + 1, y, z + 1, tex[1], tex[0], layer);
-							int v2 = chunkMesh.addVertex(x + 1, y + 1, z, tex[0], tex[1], layer);
-							int v3 = chunkMesh.addVertex(x + 1, y + 1, z + 1, tex[1], tex[1], layer);
+							int v0 = chunkMesh.addVertex(x + 1, y, z, tex[0], tex[1], layer);
+							int v1 = chunkMesh.addVertex(x + 1, y, z + 1, tex[1], tex[1], layer);
+							int v2 = chunkMesh.addVertex(x + 1, y + 1, z, tex[0], tex[0], layer);
+							int v3 = chunkMesh.addVertex(x + 1, y + 1, z + 1, tex[1], tex[0], layer);
 							chunkMesh.addQuad(v0, v1, v2, v3);
 						}
 						if (visibleFaces.PZ)
 						{
 							int layer = blockData.textureLayers.PZ;
-							int v0 = chunkMesh.addVertex(x + 1, y, z + 1, tex[0], tex[0], layer);
-							int v1 = chunkMesh.addVertex(x, y, z + 1, tex[1], tex[0], layer);
-							int v2 = chunkMesh.addVertex(x + 1, y + 1, z + 1, tex[0], tex[1], layer);
-							int v3 = chunkMesh.addVertex(x, y + 1, z + 1, tex[1], tex[1], layer);
+							int v0 = chunkMesh.addVertex(x + 1, y, z + 1, tex[0], tex[1], layer);
+							int v1 = chunkMesh.addVertex(x, y, z + 1, tex[1], tex[1], layer);
+							int v2 = chunkMesh.addVertex(x + 1, y + 1, z + 1, tex[0], tex[0], layer);
+							int v3 = chunkMesh.addVertex(x, y + 1, z + 1, tex[1], tex[0], layer);
 							chunkMesh.addQuad(v0, v1, v2, v3);
 						}
 						if (visibleFaces.PY)
 						{
 							int layer = blockData.textureLayers.PY;
-							int v0 = chunkMesh.addVertex(x, y + 1, z, tex[0], tex[0], layer);
-							int v1 = chunkMesh.addVertex(x + 1, y + 1, z, tex[1], tex[0], layer);
-							int v2 = chunkMesh.addVertex(x, y + 1, z + 1, tex[0], tex[1], layer);
-							int v3 = chunkMesh.addVertex(x + 1, y + 1, z + 1, tex[1], tex[1], layer);
+							int v0 = chunkMesh.addVertex(x, y + 1, z, tex[0], tex[1], layer);
+							int v1 = chunkMesh.addVertex(x + 1, y + 1, z, tex[1], tex[1], layer);
+							int v2 = chunkMesh.addVertex(x, y + 1, z + 1, tex[0], tex[0], layer);
+							int v3 = chunkMesh.addVertex(x + 1, y + 1, z + 1, tex[1], tex[0], layer);
 							chunkMesh.addQuad(v0, v1, v2, v3);
 						}
 					}

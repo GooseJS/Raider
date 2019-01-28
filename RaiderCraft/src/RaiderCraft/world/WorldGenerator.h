@@ -29,7 +29,9 @@ namespace RaiderCraft
 					int maxY = (64.f * _heightMap.GetValue(x, z));
 					for (int y = 0; y < maxY; y++)
 					{
-						world->setBlockAt(x, y, z, 1);
+						world->setBlockAt(x, y, z, 2);
+						if (world->getBlockAt(x, y - 1, z) == 2)
+							world->setBlockAt(x, y - 1, z, 1);
 					}
 				}
 			}

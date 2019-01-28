@@ -38,9 +38,18 @@ namespace Raider
 		{
 			GLuint textureID;
 			std::unordered_map<std::string, uint8_t> textureEntries;
+
+			int getEntry(const char* name)
+			{
+				auto& entry = textureEntries.find(name);
+				if (entry != textureEntries.end())
+					return entry->second;
+				return -1;
+			}
+
 		};
 
-		static TextureArray create2DTextureArray(const char* pathToTextureDIR, int texelWidth, int texelHeight, std::vector<std::string> fileNames)
+		static TextureArray create2DTextureArray(int texelWidth, int texelHeight, std::vector<std::string> fileNames)
 		{
 			GLuint textureID;
 

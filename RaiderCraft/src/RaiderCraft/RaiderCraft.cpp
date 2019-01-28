@@ -31,21 +31,29 @@ public:
 
 			worldRenderer.setWorldRenderCam(&player.getPlayerCamera());
 			
-			RaiderCraft::BlockData BLOCK_DATA_AIR;
-			BLOCK_DATA_AIR.textureLayers.PY = 
+			std::vector<std::string> fileNames;
+			fileNames.emplace_back("grass-top.png");
+			fileNames.emplace_back("grass-side.png");
+			fileNames.emplace_back("dirt.png");
+			RaiderCraft::BlockManager::getInstance()->loadTextureAtlas(16, 16, fileNames);
 
-			RaiderCraft::BlockData BLOCK_DATA_GRASS;
-			RaiderCraft::BlockData BLOCK_DATA_DIRT;
+			RaiderCraft::BlockData BLOCK_DATA_AIR {};
+			RaiderCraft::BlockData BLOCK_DATA_GRASS {};
+			RaiderCraft::BlockData BLOCK_DATA_DIRT {};
+
 			RaiderCraft::Block BLOCK_AIR("Air", BLOCK_DATA_AIR);
-			RaiderCraft::Block BLOCK_GRASS(1, "Grass");
-			BLOCK_GRASS.setFaceTexture(RaiderCraft::Block::BlockFace::POSITIVE_Y, "grass-top.png");
-			BLOCK_GRASS.setFaceTexture(RaiderCraft::Block::BlockFace::SIDES, "grass-side.png");
-			BLOCK_GRASS.setFaceTexture(RaiderCraft::Block::BlockFace::NEGATIVE_Y, "dirt.png");
-			RaiderCraft::Block BLOCK_DIRT(2, "Dirt");
-			BLOCK_DIRT.setFaceTexture(RaiderCraft::Block::BlockFace::ALL, "dirt.png");
-			RaiderCraft::Blocks::getInstance()->addBlock(BLOCK_AIR);
-			RaiderCraft::Blocks::getInstance()->addBlock(BLOCK_GRASS);
-			RaiderCraft::Blocks::getInstance()->addBlock(BLOCK_DIRT);
+			RaiderCraft::Block BLOCK_DIRT("Dirt", BLOCK_DATA_DIRT);
+			RaiderCraft::Block BLOCK_GRASS("Grass", BLOCK_DATA_GRASS);
+
+			RaiderCraft::BlockManager::getInstance()->setBlockTexture(BLOCK_DIRT, RaiderCraft::BlockFace::ALL, "dirt");
+			RaiderCraft::BlockManager::getInstance()->setBlockTexture(BLOCK_GRASS, RaiderCraft::BlockFace::SIDES, "grass-side");
+			RaiderCraft::BlockManager::getInstance()->setBlockTexture(BLOCK_GRASS, RaiderCraft::BlockFace::PY, "grass-top");
+			RaiderCraft::BlockManager::getInstance()->setBlockTexture(BLOCK_GRASS, RaiderCraft::BlockFace::NY, "dirt");
+			
+			RaiderCraft::BlockManager::getInstance()->registerBlock(BLOCK_AIR);
+			RaiderCraft::BlockManager::getInstance()->registerBlock(BLOCK_DIRT);
+			RaiderCraft::BlockManager::getInstance()->registerBlock(BLOCK_GRASS);
+
 			debugTimer.startSection("worldGen");
 			worldGenerator.generateWorld(&world);
 			Raider::RaiderDebugTimer::RaiderDebugSection section = debugTimer.endSection();

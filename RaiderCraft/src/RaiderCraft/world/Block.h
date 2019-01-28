@@ -16,6 +16,19 @@ namespace RaiderCraft
 		int PZ;
 	};
 
+	enum BlockFace
+	{
+		NX = 0,
+		NY = 1,
+		NZ = 2,
+		PX = 3,
+		PY = 4,
+		PZ = 5,
+
+		SIDES = 6,
+		ALL = 7
+	};
+
 	struct BlockData
 	{
 		BlockFaceLayers textureLayers;
@@ -24,6 +37,7 @@ namespace RaiderCraft
 	class Block
 	{
 	private:
+		friend class BlockManager;
 		int _blockID;
 		const char* _name;
 		BlockData _data;
@@ -31,7 +45,7 @@ namespace RaiderCraft
 		Block(const char * name, BlockData blockData);
 		int getBlockID() const { return _blockID; }
 		const char* getName() const { return _name; }
-		BlockData getBlockData() { return _data; }
+		BlockData& getBlockData() { return _data; }
 	};
 
 	class BlockManager
@@ -47,7 +61,9 @@ namespace RaiderCraft
 		Block getRegisteredBlock(const char* blockName);
 		int getLastRegisteredBlockID();
 
-		void loadTextureAtlas(const char* path, int texelWidth, int texelHeight, std::vector<std::string> fileNames);
-		void setBlockTexture(Block& block, BlockFaceLayers layer, const char* textureName);
+		void loadTextureAtlas(int texelWidth, int texelHeight, std::vector<std::string> fileNames);
+		void setBlockTexture(Block& block, BlockFace face, const char* textureName);
+
+		Raider::Texture::TextureArray getTextureAtlas() { return _textureAtlas; }
 	};
 }

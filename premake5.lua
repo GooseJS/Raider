@@ -62,6 +62,12 @@ project "RaiderEngine"
 		staticruntime "On"
 		systemversion "latest"
 		buildoptions "/MD"
+		disablewarnings {
+			"4251",
+			"4267",
+			"4244",
+			"4005"
+		}
 
 	defines
 	{
@@ -131,6 +137,12 @@ project "RaiderCraft"
 		staticruntime "On"
 		systemversion "latest"
 		buildoptions "/MD"
+		disablewarnings {
+			"4251",
+			"4267",
+			"4244",
+			"4005"
+		}
 
 		defines
 		{

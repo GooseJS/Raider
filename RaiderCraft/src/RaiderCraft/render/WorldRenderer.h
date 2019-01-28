@@ -17,24 +17,17 @@ namespace RaiderCraft
 	private:
 		Raider::Shader _shader;
 		Camera* _worldRenderCam;
-		Raider::Texture::TextureArray _textureAtlas;
 	public:
 		WorldRenderer() {}
 		void initRenderer()
 		{
 			_shader.initFromFile("shader.vert", "shader.frag");
-			std::vector<std::string> fileNames;
-			fileNames.emplace_back("grass-side.png");
-			fileNames.emplace_back("grass-top.png");
-			fileNames.emplace_back("dirt.png");
-			_textureAtlas = Raider::Texture::create2DTextureArray("sprites.png", 16, 16, fileNames);
-			Blocks::getInstance()->loadBlockTextures(_textureAtlas);
 		}
 
 		void render(World* gameWorld)
 		{
 			glEnable(GL_DEPTH_TEST);
-			//glEnable(GL_CULL_FACE);
+			glEnable(GL_CULL_FACE);
 			glFrontFace(GL_CW);
 			_worldRenderCam->generateMatrices();
 			glm::mat4 transformedMatrix = _worldRenderCam->getProjectionMatrix() * _worldRenderCam->getViewMatrix();
@@ -46,7 +39,7 @@ namespace RaiderCraft
 
 			glm::mat4 translation(1.0f);
 
-			glBindTexture(GL_TEXTURE_2D_ARRAY, _textureAtlas.textureID);
+			glBindTexture(GL_TEXTURE_2D_ARRAY, BlockManager::getInstance()->getTextureAtlas().textureID);
 			glActiveTexture(GL_TEXTURE0);
 
 			for (auto &chunk : gameWorld->getLoadedChunks())

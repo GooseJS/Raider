@@ -18,6 +18,8 @@ namespace RaiderCraft
 
 	int BlockManager::registerBlock(Block block)
 	{
+		int blockID = _registeredBlocks.size();
+		block._blockID = blockID;
 		_registeredBlocks.push_back(block);
 		return _registeredBlocks.size() - 1;
 	}
@@ -41,14 +43,53 @@ namespace RaiderCraft
 		return _registeredBlocks.size() - 1;
 	}
 
-	void BlockManager::loadTextureAtlas(const char* path, int texelWidth, int texelHeight, std::vector<std::string> fileNames)
+	void BlockManager::loadTextureAtlas(int texelWidth, int texelHeight, std::vector<std::string> fileNames)
 	{
-		_textureAtlas = Raider::Texture::create2DTextureArray(path, texelWidth, texelHeight, fileNames);
+		_textureAtlas = Raider::Texture::create2DTextureArray(texelWidth, texelHeight, fileNames);
 	}
 
-	void BlockManager::setBlockTexture(Block & block, BlockFaceLayers layer, const char * textureName)
+	void BlockManager::setBlockTexture(Block& block, BlockFace face, const char* textureName)
 	{
-		if (layer)
+		if (face != ALL && face != SIDES)
+		{
+			switch (face)
+			{
+				case NX:
+					block.getBlockData().textureLayers.NX = _textureAtlas.getEntry(textureName);
+					break;
+				case NY:
+					block.getBlockData().textureLayers.NY = _textureAtlas.getEntry(textureName);
+					break;
+				case NZ:
+					block.getBlockData().textureLayers.NZ = _textureAtlas.getEntry(textureName);
+					break;
+				case PX:
+					block.getBlockData().textureLayers.PX = _textureAtlas.getEntry(textureName);
+					break;
+				case PY:
+					block.getBlockData().textureLayers.PY = _textureAtlas.getEntry(textureName);
+					break;
+				case PZ:
+					block.getBlockData().textureLayers.PZ = _textureAtlas.getEntry(textureName);
+					break;
+			}
+		}
+		else if (face == ALL)
+		{
+			block.getBlockData().textureLayers.NX = _textureAtlas.getEntry(textureName);
+			block.getBlockData().textureLayers.NY = _textureAtlas.getEntry(textureName);
+			block.getBlockData().textureLayers.NZ = _textureAtlas.getEntry(textureName);
+			block.getBlockData().textureLayers.PX = _textureAtlas.getEntry(textureName);
+			block.getBlockData().textureLayers.PY = _textureAtlas.getEntry(textureName);
+			block.getBlockData().textureLayers.PZ = _textureAtlas.getEntry(textureName);
+		}
+		else if (face == SIDES)
+		{
+			block.getBlockData().textureLayers.NX = _textureAtlas.getEntry(textureName);
+			block.getBlockData().textureLayers.NZ = _textureAtlas.getEntry(textureName);
+			block.getBlockData().textureLayers.PX = _textureAtlas.getEntry(textureName);
+			block.getBlockData().textureLayers.PZ = _textureAtlas.getEntry(textureName);
+		}
 	}
 	///endregion
 }
